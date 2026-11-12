@@ -1,5 +1,17 @@
 {
   "$schema": "./schema/notices.schema.json",
   "schema": 1,
-  "notices": []
+  "notices": [
+    {
+      "id": "2026-11-12-phlynx-s-first-notice",
+      "title": "PhLynx's first notice",
+      "description": "This is the first notice issued for the PhLynx application.",
+      "severity": "info",
+      "published": "2026-11-12",
+      "expires": "2026-11-15",
+      "targets": [
+        "phlynx"
+      ]
+    }
+  ]
 }
