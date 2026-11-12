@@ -1,0 +1,40 @@
+name: Validate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate the notices
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Test the scripts
+        run: npm test
+
+      - name: Validate notices.json
+        run: npm run validate
+
+  refresh-cdn:
+    # The applications read notices.json through jsDelivr, which would otherwise serve the old file for hours.
+    name: Refresh the CDN
+    if: github.event_name == 'push'
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl --fail --silent --show-error "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/notices.json"

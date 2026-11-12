@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cdn.jsdelivr.net/gh/physiomelinks/LynxNotices@main/schema/notices.schema.json",
+  "title": "Lynx notices",
+  "description": "The notices shown in the Physiome Links applications.",
+  "type": "object",
+  "required": ["schema", "notices"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema": {
+      "description": "The layout of this file. Applications read only the layouts they know, so it changes only when an older application could no longer read the file.",
+      "const": 1
+    },
+    "notices": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/notice" }
+    }
+  },
+  "$defs": {
+    "application": {
+      "description": "The applications that read this file, by the name each looks for in a notice's targets.",
+      "enum": ["phlynx", "cuflynx"]
+    },
+    "date": {
+      "description": "A day (2026-11-12, taken as the start of that day in UTC) or a moment (2026-11-12T09:00:00Z).",
+      "type": "string",
+      "anyOf": [{ "format": "date" }, { "format": "date-time" }]
+    },
+    "notice": {
+      "type": "object",
+      "required": ["id", "title", "targets", "published"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "What an application remembers a read notice by: unique, and never changed or used again.",
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "maxLength": 80
+        },
+        "title": {
+          "description": "One line of plain text.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^\\S(.*\\S)?$"
+        },
+        "description": {
+          "description": "Plain text; line breaks are kept, markup is shown as written.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "link": {
+          "description": "Where to read more, such as an issue. Applications follow https links only.",
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "severity": {
+          "description": "How pressing the notice is; info when left out.",
+          "enum": ["info", "warning", "critical"]
+        },
+        "published": {
+          "description": "When the notice is first shown. Notices are listed newest first.",
+          "$ref": "#/$defs/date"
+        },
+        "expires": {
+          "description": "When the notice stops being shown. Give one to anything that will not matter for ever.",
+          "$ref": "#/$defs/date"
+        },
+        "targets": {
+          "description": "The applications that show the notice: all, or any of the applications.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "anyOf": [{ "const": "all" }, { "$ref": "#/$defs/application" }]
+          }
+        },
+        "versions": {
+          "description": "By application, the versions of it that show the notice, as a semver range such as <0.8.0. An application left out shows the notice in every version.",
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/application" },
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

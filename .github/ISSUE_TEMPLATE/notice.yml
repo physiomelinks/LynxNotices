@@ -1,0 +1,78 @@
+name: Post a notice
+description: Announce something to the users of the Physiome Links applications.
+title: 'Notice: '
+labels: ['notice']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form drafts a notice as a pull request, which a maintainer reviews and merges to publish.
+        The notice's **id** is made from its publication date and title, and it is **published** on the day the pull request is drafted unless you name another.
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      description: One line of plain text, up to 100 characters.
+      placeholder: Support for pre-0.5 workspace files ends in v0.8
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Plain text, up to 600 characters. Line breaks are kept; Markdown is shown as written.
+      placeholder: Re-save older workspaces to upgrade them.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: info for news, warning for something users should act on, critical for something that will break their work.
+      options:
+        - info
+        - warning
+        - critical
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: applications
+    attributes:
+      label: Applications
+      description: Where the notice is shown.
+      multiple: true
+      options:
+        - All applications
+        - PhLynx
+        - CUFLynx
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link
+      description: Where to read more, such as an issue. Must start with https://.
+      placeholder: https://github.com/physiomelinks/phlynx/issues/1234
+  - type: input
+    id: published
+    attributes:
+      label: Publish on
+      description: Leave empty to publish as soon as the pull request is merged. A later day (YYYY-MM-DD, from 00:00 UTC) holds the notice back until then.
+      placeholder: YYYY-MM-DD
+  - type: input
+    id: expires
+    attributes:
+      label: Expires
+      description: The day (YYYY-MM-DD, at 00:00 UTC) the notice stops being shown. Give one to anything that will not matter for ever.
+      placeholder: YYYY-MM-DD
+  - type: input
+    id: versions-phlynx
+    attributes:
+      label: PhLynx versions
+      description: Leave empty to show the notice in every version of PhLynx. Otherwise a semver range.
+      placeholder: <0.8.0
+  - type: input
+    id: versions-cuflynx
+    attributes:
+      label: CUFLynx versions
+      description: Leave empty to show the notice in every version of CUFLynx. Otherwise a semver range.
+      placeholder: '>=1.2.0'
