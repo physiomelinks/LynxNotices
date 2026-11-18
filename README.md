@@ -48,15 +48,29 @@ Add an entry to the top of `notices` in [`notices.json`](notices.json), run `npm
 | `title` | yes | One line of plain text, up to 100 characters. |
 | `targets` | yes | Where the notice is shown: `["all"]`, or any of `"phlynx"` and `"cuflynx"`. |
 | `published` | yes | When the notice is first shown. Notices are listed newest first. |
-| `description` | no | Plain text, up to 600 characters. Line breaks are kept; markup is shown as written. |
+| `description` | no | Markdown, up to 1500 characters. See [Writing a description](#writing-a-description). |
 | `link` | no | Where to read more. Must start with `https://`. |
 | `severity` | no | `info` (the default), `warning` or `critical`. |
 | `expires` | no | When the notice stops being shown. |
 | `versions` | no | By application, the versions that show the notice, as a [semver range](https://github.com/npm/node-semver#ranges). An application left out shows it in every version. |
 
-Dates are a day (`2026-11-12`, meaning 00:00 UTC that day) or a moment (`2026-11-12T09:00:00Z`).
+Dates are a day (`2026-11-12`, meaning 00:00 UTC that day) or a moment (`2026-11-12T09:00:00Z`). A day is reached at 00:00 UTC, which is 1 pm in New Zealand in summer; to publish first thing in the morning there, give a moment, or the day before.
 
 The full definition is [`schema/notices.schema.json`](schema/notices.schema.json).
+
+## Writing a description
+
+The description is Markdown: **bold**, _italic_, `code`, lists, headings, quotes and links all work, and a single line break is kept. To keep notices safe to show in every application:
+
+- raw HTML is shown as text, not rendered;
+- images are not drawn (`![alt](url)` becomes a link to the image);
+- only `https` links are followed; any other link is shown as written.
+
+A notice is a card in a list, so keep it short: a sentence or two, or a few bullets, and a link to a longer page for the details. For release highlights, link to the application's own "What's New" page.
+
+```json
+"description": "PhLynx 0.7 adds the **Physiology view** and makes your work harder to lose.\n\n- Recovery of unsaved work\n- Modular CellML exports\n\nRead [What's New in 0.7](https://phlynx.com/docs/getting-started/whats-new)."
+```
 
 ## Rules worth knowing
 
@@ -79,7 +93,7 @@ and should follow these rules, so that old installs keep working as the file gro
 - Read the file only when `schema` is `1`. A layout that older applications could not read will be published under a new schema number, at a new path.
 - Show a notice when `targets` holds the application's name or `all`, the application's version is within its range in `versions` (if it has one), `published` has passed and `expires` has not.
 - Ignore fields you do not know, and skip any entry you cannot read without dropping the rest.
-- Treat `title` and `description` as plain text, never as HTML, and follow only `https` links.
+- Treat `title` as plain text. Render `description` as Markdown with raw HTML shown as text and images not drawn, and follow only `https` links. An application without a Markdown renderer may show the description as plain text: it stays readable.
 
 jsDelivr serves a branch file for up to twelve hours. The **Validate** workflow asks it to refresh after every merge to `main`, which brings that down to a few minutes.
 

@@ -35,6 +35,14 @@ test('reads the answers by heading, with nothing for a field left empty', () => 
   assert.equal(answers.get('Link'), '')
 })
 
+test('keeps Markdown headings inside an answer', () => {
+  const description = '### Highlights\n\n- **Physiology view**\n\n### Fixes\n\nMany.'
+  const { notice, problems } = draft({ Description: description, Severity: 'warning' })
+  assert.deepEqual(problems, [])
+  assert.equal(notice.description, description)
+  assert.equal(notice.severity, 'warning')
+})
+
 test('fills in the id and the publication date', () => {
   const { notice, problems } = draft()
   assert.deepEqual(problems, [])
