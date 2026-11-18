@@ -17,20 +17,37 @@ const VERSIONS_LABEL = /^(.+) versions$/
 const NO_RESPONSE = '_No response_'
 const MAX_SLUG_LENGTH = 48
 
+/** Whether `heading` is one of the form's own, rather than one written inside an answer. */
+const isFormHeading = (heading) => Object.values(FORM_LABELS).includes(heading) || VERSIONS_LABEL.test(heading)
+
 /**
  * The answers of an issue form, by heading. GitHub writes a submitted form as `### Heading` then the answer,
- * with `_No response_` for a field left empty.
+ * with `_No response_` for a field left empty. Only the form's own headings start an answer, so a Markdown
+ * description may hold `###` headings of its own.
  *
  * @param {string} body - The issue's body.
  * @returns {Map<string, string>}
  */
 export function parseIssueForm(body) {
   const answers = new Map()
-  const sections = String(body ?? '').replace(/\r\n/g, '\n').split(/^### +(.+?) *$/m)
-  for (let i = 1; i < sections.length; i += 2) {
-    const answer = sections[i + 1].trim()
-    answers.set(sections[i], answer === NO_RESPONSE ? '' : answer)
+  let heading = null
+  let lines = []
+  const finish = () => {
+    if (heading === null) return
+    const answer = lines.join('\n').trim()
+    answers.set(heading, answer === NO_RESPONSE ? '' : answer)
   }
+  for (const line of String(body ?? '').replace(/\r\n/g, '\n').split('\n')) {
+    const match = /^### +(.+?) *$/.exec(line)
+    if (match && isFormHeading(match[1]) && !answers.has(match[1]) && match[1] !== heading) {
+      finish()
+      heading = match[1]
+      lines = []
+    } else {
+      lines.push(line)
+    }
+  }
+  finish()
   return answers
 }
 

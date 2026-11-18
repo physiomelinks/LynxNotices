@@ -46,10 +46,10 @@
           "pattern": "^\\S(.*\\S)?$"
         },
         "description": {
-          "description": "Plain text; line breaks are kept, markup is shown as written.",
+          "description": "Markdown. Applications show raw HTML as text, do not draw images, and follow https links only; a single line break is kept.",
           "type": "string",
           "minLength": 1,
-          "maxLength": 600
+          "maxLength": 1500
         },
         "link": {
           "description": "Where to read more, such as an issue. Applications follow https links only.",

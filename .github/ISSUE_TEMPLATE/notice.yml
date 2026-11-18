@@ -20,7 +20,10 @@ body:
     id: description
     attributes:
       label: Description
-      description: Plain text, up to 600 characters. Line breaks are kept; Markdown is shown as written.
+      description: >-
+        Markdown, up to 1500 characters: **bold**, _italic_, lists and [links](https://example.org) work.
+        HTML is shown as written, images are not drawn, and only https links are followed.
+        Keep it short; link to a longer page for the details.
       placeholder: Re-save older workspaces to upgrade them.
   - type: dropdown
     id: severity

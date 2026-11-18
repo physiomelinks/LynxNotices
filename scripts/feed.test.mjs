@@ -29,6 +29,7 @@ test('accepts a notice with every field', () => {
   })
   assert.deepEqual(problemsOf(full), [])
   assert.deepEqual(problemsOf(notice({ targets: ['all'], versions: { phlynx: '<0.8.0' } })), [])
+  assert.deepEqual(problemsOf(notice({ description: '**Markdown** [link](https://phlynx.com)\n\n' + 'x'.repeat(1400) })), [])
 })
 
 test('rejects a feed of another shape', () => {
@@ -44,6 +45,7 @@ for (const [what, overrides, expected] of [
   ['an unknown target', { targets: ['notlynx'] }, /targets/],
   ['an id that is not lower-case words', { id: 'Not An Id' }, /id/],
   ['a title with space around it', { title: ' padded ' }, /title/],
+  ['a description over 1500 characters', { description: 'x'.repeat(1501) }, /description/],
   ['a link that is not https', { link: 'http://example.org/' }, /link/],
   ['an unknown severity', { severity: 'apocalyptic' }, /severity/],
   ['a date that is not one', { published: '12 November' }, /published/],
